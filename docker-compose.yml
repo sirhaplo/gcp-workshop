@@ -1,0 +1,34 @@
+services:
+  frontend:
+    build: ./todo-frontend
+    # image: todo-frontend
+    ports:
+      - 80:8080
+    environment:
+      API_URL: http://api:8000
+    depends_on:
+      - api
+
+  api:
+    build: ./todo-api
+    # image: todo-api
+    ports:
+      - 8000:8000
+    environment:
+      DATABASE_URL: postgresql://postgres:password@db:5432/todo_db
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=todo_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
