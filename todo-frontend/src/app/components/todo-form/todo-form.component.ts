@@ -31,7 +31,7 @@ import { Todo } from '../../models/todo.model';
   `
 })
 export class TodoFormComponent {
-  private todoService = inject(TodoService);
+  private readonly todoService = inject(TodoService);
 
   newTodo: Todo = {
     title: '',
