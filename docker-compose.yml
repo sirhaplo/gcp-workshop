@@ -1,7 +1,7 @@
 services:
   frontend:
     build: ./todo-frontend
-    # image: todo-frontend
+    image: sirhaplo/todo-frontend
     ports:
       - 80:8080
     environment:
@@ -11,7 +11,7 @@ services:
 
   api:
     build: ./todo-api
-    # image: todo-api
+    image: sirhaplo/todo-api
     ports:
       - 8000:8000
     environment:
