@@ -1,11 +1,19 @@
 services:
+  proxy:
+    image: traefik:v3.2
+    command: --api.insecure=true --providers.docker
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
   frontend:
     build: ./todo-frontend
     image: sirhaplo/todo-frontend
-    ports:
-      - 80:8080
-    environment:
-      API_URL: http://api:8000
+    labels:
+      - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
+      - "traefik.http.services.frontend.loadbalancer.server.port=8080"
     depends_on:
       - api
 
@@ -16,6 +24,11 @@ services:
       - 8000:8000
     environment:
       DATABASE_URL: postgresql://postgres:password@db:5432/todo_db
+    labels:
+      - "traefik.http.middlewares.api-prefix-strip.stripprefix.prefixes=/api"      
+      - "traefik.http.routers.api.middlewares=api-prefix-strip@docker"
+      - "traefik.http.routers.api.rule=PathPrefix(`/api`)"
+      - "traefik.http.services.api.loadbalancer.server.port=8000"
     depends_on:
       - db
 
